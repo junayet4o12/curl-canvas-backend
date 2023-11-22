@@ -25,12 +25,24 @@ async function run() {
     try {
         const curlCanvas = client.db('curlCanvas')
         const servicesCollection = curlCanvas.collection('services')
+        const feedbackCollection = curlCanvas.collection('feedback')
         // services start 
         app.get('/services', async (req, res) => {
             const result = await servicesCollection.find().toArray();
             res.send(result)
         })
+        app.get('/servicesamount', async (req, res) => {
+            const count = await servicesCollection.estimatedDocumentCount()
+            res.send({ count })
+        })
         // services end
+
+        // feedback start
+        app.get('/feedback', async (req, res) => {
+            const result  = await feedbackCollection.find().toArray();
+            res.send(result)
+        })
+        // feedback end
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
     }
