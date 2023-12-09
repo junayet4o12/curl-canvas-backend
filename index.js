@@ -28,6 +28,25 @@ async function run() {
         const feedbackCollection = curlCanvas.collection('feedback')
         const portfolioCollection = curlCanvas.collection('portfolio')
         const barbersCollection = curlCanvas.collection('barbers')
+        const usersCollection = curlCanvas.collection('users')
+
+        // users start
+        app.get('/users', async (req, res) => {
+            const result = await usersCollection.find().toArray()
+            res.send(result)
+        })
+
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const query = { email: user.email }
+            const axistingUser = await usersCollection.findOne(query);
+            if (axistingUser) {
+                return res.send({ message: ' user already exists' })
+            }
+            const result = await usersCollection.insertOne(user);
+            res.send(result)
+        })
+        // users end
         // services start 
         app.get('/services', async (req, res) => {
             const result = await servicesCollection.find().toArray();
@@ -41,23 +60,23 @@ async function run() {
 
         // feedback start
         app.get('/feedback', async (req, res) => {
-            const result  = await feedbackCollection.find().toArray();
+            const result = await feedbackCollection.find().toArray();
             res.send(result)
         })
         // feedback end
 
         //portfolio Start
-        app.get('/portfolio', async(req, res)=> {
+        app.get('/portfolio', async (req, res) => {
             const result = await portfolioCollection.find().toArray()
             res.send(result)
         })
         //portfolio end
 
         // barbers start
-        app.get('/barbers', async(req, res)=> {
-            const result  = await barbersCollection.find().toArray();
+        app.get('/barbers', async (req, res) => {
+            const result = await barbersCollection.find().toArray();
             res.send(result)
-        }) 
+        })
         // barbers end
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
